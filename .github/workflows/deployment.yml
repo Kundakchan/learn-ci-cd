@@ -1,0 +1,30 @@
+name: Deploymen aplication
+on: push
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get repository code
+        uses: actions/checkout@v3
+      - name: Install dependecies
+        run: npm ci
+      - name: Unit testing aplication
+        run: npm run test:unit
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get repository code
+        uses: actions/checkout@v3
+      - name: Install dependecies
+        run: npm ci
+      - name: lint code
+        run: npm run lint
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get repository code
+        uses: actions/checkout@v3
+      - name: Install dependecies
+        run: npm ci
+      - name: Build aplication
+        run: npm run build

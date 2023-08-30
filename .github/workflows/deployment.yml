@@ -31,7 +31,7 @@ jobs:
       - name: Build Appliction
         run: $BUILD_SCRIPT
       - name: 'print env'
-        run: 'print ${{ toJson(vars) }}'
+        run: 'print ${{ vars.DEPLOY_SERVER_HOST }}'
       # Доставляем собранное приложение на сервер
       - name: Deploy to Server
         uses: appleboy/scp-action@master

@@ -7,6 +7,7 @@ env:
   # В теории можно собрать не только Vue-приложение, так как принцип сборки мало где отличается
   BUILD_SCRIPT: npm run build
   BUILD_SCRIPT_OUTPUT: dist
+  BRANCH_NAME: master
 
 jobs:
   deploy:
@@ -19,11 +20,6 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '20'
-      # Записываем в переменные окружения имя текущей ветки
-      # Чтобы избежать конфиликтов с URL, меняем точки на _, а слеши на минусы
-      - name: Get branch name
-        shell: bash
-        run: echo "name=$(echo ${GITHUB_REF#refs/heads/} | sed 's/\//-/g' | sed 's/\./_/g') > $GitHub"
       # Устанавливаем зависимости для сборки
       - name: Install Dependencies
         run: npm ci

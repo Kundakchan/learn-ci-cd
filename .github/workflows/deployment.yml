@@ -1,25 +1,45 @@
 name: CI
-on:
-  push:
-    branches:
-      - master
-  workflow_dispatch:
-  
+
+on: [push]
+
+env:
+  DEPLOY_PATH: /var/www/app
+  # В теории можно собрать не только Vue-приложение, так как принцип сборки мало где отличается
+  BUILD_SCRIPT: npm run build
+  BUILD_SCRIPT_OUTPUT: dist
+
 jobs:
-  run_pull:
+  deploy:
     runs-on: ubuntu-latest
     environment: production
     steps:
-    - name: install ssh keys
-      # check this thread to understand why its needed:
-      # https://stackoverflow.com/a/70447517
-      run: |
-        install -m 600 -D /dev/null ~/.ssh/id_rsa
-        echo "${{ secrets.DEPLOY_SERVER_KEY }}" > ~/.ssh/id_rsa
-        ssh-keyscan -H ${{ vars.DEPLOY_SERVER_HOST }} > ~/.ssh/known_hosts
-    - name: connect and pull
-      run: |
-        ssh ${{ vars.DEPLOY_SERVER_USERNAME }}@${{ vars.DEPLOY_SERVER_HOST }}
-        pwd
-    - name: cleanup
-      run: rm -rf ~/.ssh
+      # Делаем checkout текущей ветки
+      - uses: actions/checkout@v3
+      # Устанавливаем Node.JS для сборки приложения
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+      # Записываем в переменные окружения имя текущей ветки
+      # Чтобы избежать конфиликтов с URL, меняем точки на _, а слеши на минусы
+      - name: Get branch name
+        shell: bash
+        run: echo "name=$(echo ${GITHUB_REF#refs/heads/} | sed 's/\//-/g' | sed 's/\./_/g') > $GitHub"
+      # Устанавливаем зависимости для сборки
+      - name: Install Dependencies
+        run: npm ci
+      # Собираем приложение
+      - name: Build Appliction
+        run: $BUILD_SCRIPT
+      # Доставляем собранное приложение на сервер
+      - name: Deploy to Server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ vars.DEPLOY_SERVER_HOST }}
+          port: ${{ vars.DEPLOY_SERVER_PORT }}
+          username: ${{ vars.DEPLOY_SERVER_USERNAME }}
+          key: ${{ secrets.DEPLOY_SERVER_KEY }}
+          source: ${{ env.BUILD_SCRIPT_OUTPUT }}
+          target: ${{ env.DEPLOY_PATH }}/${{ env.BRANCH_NAME }}
+          strip_components: 1
+      - name: Print Info
+        run: echo "Deployed at https://${BRANCH_NAME}.app.example.ru/"

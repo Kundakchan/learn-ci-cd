@@ -18,6 +18,6 @@ jobs:
         echo "${{ vars.DEPLOY_SERVER_KEY }}" > ~/.ssh/id_rsa
         ssh-keyscan -H ${{ vars.DEPLOY_SERVER_HOST }} > ~/.ssh/known_hosts
     - name: connect and pull
-      run: ssh ${{ vars.DEPLOY_SERVER_USERNAME }}@${{ vars.DEPLOY_SERVER_HOST }} "touch index.js"
+      run: ssh ${{ vars.DEPLOY_SERVER_USERNAME }}@${{ vars.DEPLOY_SERVER_HOST }}
     - name: cleanup
       run: rm -rf ~/.ssh

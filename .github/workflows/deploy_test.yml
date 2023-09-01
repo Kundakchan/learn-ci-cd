@@ -4,6 +4,7 @@ on: [workflow_dispatch]
 env:
   DEPLOY_PATH: /var/www/app
   BUILD_SCRIPT_OUTPUT: dist
+  PATH_TO_CACHE: dir=$(npm config get cache)
 jobs:
   ESLint:
     runs-on: ubuntu-latest
@@ -12,17 +13,12 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 20
-      - name: Get npm cache directory
-        id: npm-cache-dir
-        shell: bash
-        run: echo "dir=$(npm config get cache)" >> ${GITHUB_OUTPUT}
-
       - name: print path
-        run: echo dir=$(npm config get cache)
+        run: echo ${{ env.PATH_TO_CACHE }}
       - name: Cache Dependencies
         uses: actions/cache@v3
         with:
-          path: ${GITHUB_OUTPUT}
+          path: ${{ env.PATH_TO_CACHE }}
           key: node-modules-key
       - name: Install Dependencies
         run: npm ci
@@ -36,14 +32,10 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 20
-      - name: Get npm cache directory
-        id: npm-cache-dir
-        shell: bash
-        run: echo "dir=$(npm config get cache)" >> ${GITHUB_OUTPUT}
       - name: Cache Dependencies
         uses: actions/cache@v3
         with:
-          path: ${GITHUB_OUTPUT}
+          path: ${{ env.PATH_TO_CACHE }}
           key: node-modules-key
       - name: Install Dependencies
         run: npm ci

@@ -44,7 +44,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: build-aplication
-          path: ~/dist
+          path: ~/dist/
       - name: print dir
         run: ls -la
 

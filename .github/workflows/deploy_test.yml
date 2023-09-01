@@ -16,6 +16,7 @@ jobs:
       - name: print
         run: echo ${{ toJson(steps) }}
       - name: Cache Dependencies
+        id: cache-primes
         uses: actions/cache@v3
         with:
           path: ~/.npm
@@ -37,6 +38,7 @@ jobs:
       - name: print
         run: echo ${{ toJson(steps) }}
       - name: Cache Dependencies
+        id: cache-primes
         uses: actions/cache@v3
         with:
           path: ~/.npm

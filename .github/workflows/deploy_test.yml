@@ -13,12 +13,12 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 20
-      - name: print path
-        run: echo "${env.PATH_TO_CACHE}"
+      - name: print
+        run: echo ${{ toJson(steps) }}
       - name: Cache Dependencies
         uses: actions/cache@v3
         with:
-          path: ${{ env.PATH_TO_CACHE }}
+          path: ~/.npm
           key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
       - name: print
         run: echo ${{ toJson(steps) }}
@@ -34,11 +34,15 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 20
+      - name: print
+        run: echo ${{ toJson(steps) }}
       - name: Cache Dependencies
         uses: actions/cache@v3
         with:
-          path: ${{ env.PATH_TO_CACHE }}
+          path: ~/.npm
           key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+      - name: print
+        run: echo ${{ toJson(steps) }}
       - name: Install Dependencies
         run: npm ci
       - name: Run unit test

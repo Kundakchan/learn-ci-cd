@@ -21,10 +21,9 @@ jobs:
         with:
           path: ~/.npm
           key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
-      # - name: print
-      #   run: echo ${{ toJson(steps) }}
+      - name: print
+        run: echo ${{ toJson(steps) }}
       - name: Install Dependencies
-        if: steps.cache-primes.outputs.cache-hit != 'true'
         run: npm ci
       - name: Run eslint
         run: npm run lint
@@ -47,7 +46,6 @@ jobs:
       # - name: print
       #   run: echo ${{ toJson(steps) }}
       - name: Install Dependencies
-        if: steps.cache-primes.outputs.cache-hit != 'true'
         run: npm ci
       - name: Run unit test
         run: npm run test:unit

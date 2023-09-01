@@ -5,8 +5,57 @@ env:
   DEPLOY_PATH: /var/www/app
   BUILD_SCRIPT_OUTPUT: dist
 jobs:
-  deploy:
+  ESLint:
     runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20
+      - name: Install Dependencies
+        run: npm ci
+      - name: Run eslint
+        run: npm run lint
+  Test-unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20
+      - name: Install Dependencies
+        run: npm ci
+      - name: Run unit test
+        run: npm run test:unit
+  Build:
+    runs-on: ubuntu-latest
+    needs: [Test-unit, ESLint]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20
+      - name: Install Dependencies
+        run: npm ci
+      - name: Build application
+        run: npm run build
+  Test-e2e:
+    needs: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20
+      - name: Install Dependencies
+        run: npm ci
+      - name: Build application
+        run: npm run build
+      - name: Testing application
+        run: npm run test:e2e
+  Deploy:
+    runs-on: ubuntu-latest
+    needs: Test-e2e
     environment: test
     steps:
       - uses: actions/checkout@v3

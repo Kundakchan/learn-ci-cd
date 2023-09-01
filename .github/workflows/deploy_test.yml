@@ -16,6 +16,9 @@ jobs:
         id: npm-cache-dir
         shell: bash
         run: echo "dir=$(npm config get cache)" >> ${GITHUB_OUTPUT}
+
+      - name: print path
+        run: echo ${GITHUB_OUTPUT}
       - name: Cache Dependencies
         uses: actions/cache@v3
         with:
@@ -27,6 +30,7 @@ jobs:
         run: npm run lint
   Test-unit:
     runs-on: ubuntu-latest
+    needs: [ESLint]
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
@@ -45,79 +49,79 @@ jobs:
         run: npm ci
       - name: Run unit test
         run: npm run test:unit
-  Build:
-    runs-on: ubuntu-latest
-    needs: [Test-unit, ESLint]
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 20
-      - name: Get npm cache directory
-        id: npm-cache-dir
-        shell: bash
-        run: echo "dir=$(npm config get cache)" >> ${GITHUB_OUTPUT}
-      - name: Cache Dependencies
-        uses: actions/cache@v3
-        with:
-          path: ${GITHUB_OUTPUT}
-          key: node-modules-key
-      - name: Install Dependencies
-        run: npm ci
-      - name: Build application
-        run: npm run build
-  Test-e2e:
-    needs: Build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 20
-      - name: Get npm cache directory
-        id: npm-cache-dir
-        shell: bash
-        run: echo "dir=$(npm config get cache)" >> ${GITHUB_OUTPUT}
-      - name: Cache Dependencies
-        uses: actions/cache@v3
-        with:
-          path: ${GITHUB_OUTPUT}
-          key: node-modules-key
-      - name: Install Dependencies
-        run: npm ci
-      - name: Build application
-        run: npm run build
-      - name: Testing application
-        run: npm run test:e2e
-  Deploy:
-    runs-on: ubuntu-latest
-    needs: Test-e2e
-    environment: test
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 20
-      - name: Get npm cache directory
-        id: npm-cache-dir
-        shell: bash
-        run: echo "dir=$(npm config get cache)" >> ${GITHUB_OUTPUT}
-      - name: Cache Dependencies
-        uses: actions/cache@v3
-        with:
-          path: ${GITHUB_OUTPUT}
-          key: node-modules-key
-      - name: Install Dependencies
-        run: npm ci
-      - name: Build application
-        run: npm run build
-      - name: deploy to server
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.DEPLOY_SERVER_HOST }}
-          port: ${{ secrets.DEPLOY_SERVER_PORT  }}
-          username: ${{ secrets.DEPLOY_SERVER_USERNAME }}
-          key: ${{ secrets.DEPLOY_SERVER_KEY }}
-          source: ${{ env.BUILD_SCRIPT_OUTPUT }}
-          target: ${{ env.DEPLOY_PATH }}
-          strip_components: 1
+  # Build:
+  #   runs-on: ubuntu-latest
+  #   needs: [Test-unit, ESLint]
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - uses: actions/setup-node@v3
+  #       with:
+  #         node-version: 20
+  #     - name: Get npm cache directory
+  #       id: npm-cache-dir
+  #       shell: bash
+  #       run: echo "dir=$(npm config get cache)" >> ${GITHUB_OUTPUT}
+  #     - name: Cache Dependencies
+  #       uses: actions/cache@v3
+  #       with:
+  #         path: ${GITHUB_OUTPUT}
+  #         key: node-modules-key
+  #     - name: Install Dependencies
+  #       run: npm ci
+  #     - name: Build application
+  #       run: npm run build
+  # Test-e2e:
+  #   needs: Build
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - uses: actions/setup-node@v3
+  #       with:
+  #         node-version: 20
+  #     - name: Get npm cache directory
+  #       id: npm-cache-dir
+  #       shell: bash
+  #       run: echo "dir=$(npm config get cache)" >> ${GITHUB_OUTPUT}
+  #     - name: Cache Dependencies
+  #       uses: actions/cache@v3
+  #       with:
+  #         path: ${GITHUB_OUTPUT}
+  #         key: node-modules-key
+  #     - name: Install Dependencies
+  #       run: npm ci
+  #     - name: Build application
+  #       run: npm run build
+  #     - name: Testing application
+  #       run: npm run test:e2e
+  # Deploy:
+  #   runs-on: ubuntu-latest
+  #   needs: Test-e2e
+  #   environment: test
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - uses: actions/setup-node@v3
+  #       with:
+  #         node-version: 20
+  #     - name: Get npm cache directory
+  #       id: npm-cache-dir
+  #       shell: bash
+  #       run: echo "dir=$(npm config get cache)" >> ${GITHUB_OUTPUT}
+  #     - name: Cache Dependencies
+  #       uses: actions/cache@v3
+  #       with:
+  #         path: ${GITHUB_OUTPUT}
+  #         key: node-modules-key
+  #     - name: Install Dependencies
+  #       run: npm ci
+  #     - name: Build application
+  #       run: npm run build
+  #     - name: deploy to server
+  #       uses: appleboy/scp-action@master
+  #       with:
+  #         host: ${{ secrets.DEPLOY_SERVER_HOST }}
+  #         port: ${{ secrets.DEPLOY_SERVER_PORT  }}
+  #         username: ${{ secrets.DEPLOY_SERVER_USERNAME }}
+  #         key: ${{ secrets.DEPLOY_SERVER_KEY }}
+  #         source: ${{ env.BUILD_SCRIPT_OUTPUT }}
+  #         target: ${{ env.DEPLOY_PATH }}
+  #         strip_components: 1

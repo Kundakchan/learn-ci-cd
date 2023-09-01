@@ -44,9 +44,9 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: build-aplication
-          path: ~/dist/
+          path: ./dist/
       - name: print dir
-        run: cd ~/dist && ls -la
+        run: cd ./dist && ls -la
 
   # Test-e2e:
   #   needs: Build

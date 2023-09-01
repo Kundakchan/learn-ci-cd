@@ -46,7 +46,7 @@ jobs:
           name: build-aplication
           path: ~/dist/
       - name: print dir
-        run: ls -la
+        run: cd ~/dist && ls -la
 
   # Test-e2e:
   #   needs: Build

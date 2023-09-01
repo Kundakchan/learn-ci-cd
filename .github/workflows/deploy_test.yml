@@ -4,7 +4,7 @@ on: [workflow_dispatch]
 env:
   DEPLOY_PATH: /var/www/app
   BUILD_SCRIPT_OUTPUT: dist
-  PATH_TO_CACHE: dir=$(npm config get cache)
+  PATH_TO_CACHE: npm config get cache
 jobs:
   ESLint:
     runs-on: ubuntu-latest

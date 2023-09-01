@@ -40,7 +40,7 @@ jobs:
         run: npm ci
       - name: Build application
         run: npm run build
-      - name: get bundle
+      - name: Upload bundle
         uses: actions/upload-artifact@v3
         with:
           name: build-aplication
@@ -57,10 +57,11 @@ jobs:
         run: npm ci
       # - name: Build application
       #   run: npm run build
-      - uses: actions/download-artifact@v3
+      - name: Download build
+        uses: actions/download-artifact@v3
         with:
           name: build-aplication
-          path: ./
+          path: ./dist
       - name: print
         run: ls -la
       - name: Testing application

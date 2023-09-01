@@ -1,5 +1,8 @@
 name: Deploy to test
-on: [workflow_dispatch]
+on: 
+  workflow_dispatch:
+  pull_request:
+    branches: [ master ]
 
 env:
   DEPLOY_PATH: /var/www/app

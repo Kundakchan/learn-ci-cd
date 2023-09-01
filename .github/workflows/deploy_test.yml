@@ -13,16 +13,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 20
-      # - name: print
-      #   run: echo ${{ toJson(steps) }}
-      - name: Cache Dependencies
-        id: cache-primes
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
-      - name: print
-        run: echo ${{ toJson(steps) }}
+          cache: 'npm'
       - name: Install Dependencies
         run: npm ci
       - name: Run eslint
@@ -35,16 +26,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 20
-      # - name: print
-      #   run: echo ${{ toJson(steps) }}
-      - name: Cache Dependencies
-        id: cache-primes
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
-      # - name: print
-      #   run: echo ${{ toJson(steps) }}
+          cache: 'npm'
       - name: Install Dependencies
         run: npm ci
       - name: Run unit test

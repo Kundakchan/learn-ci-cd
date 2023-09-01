@@ -40,11 +40,11 @@ jobs:
         run: npm ci
       - name: Build application
         run: npm run build
-      - name: Upload bundle
-        uses: actions/upload-artifact@v3
-        with:
-          name: build-aplication
-          path: ./dist
+      # - name: Upload bundle
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: build-aplication
+      #     path: ./dist
   Test-e2e:
     needs: Build
     runs-on: ubuntu-latest
@@ -55,13 +55,13 @@ jobs:
           node-version: 20
       - name: Install Dependencies
         run: npm ci
-      # - name: Build application
-      #   run: npm run build
-      - name: Download build
-        uses: actions/download-artifact@v3
-        with:
-          name: build-aplication
-          path: ./dist
+      - name: Build application
+        run: npm run build
+      # - name: Download build
+      #   uses: actions/download-artifact@v3
+      #   with:
+      #     name: build-aplication
+      #     path: ./dist
       - name: print
         run: ls -la
       - name: Testing application

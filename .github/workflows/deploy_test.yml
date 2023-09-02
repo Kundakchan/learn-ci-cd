@@ -1,37 +1,12 @@
 name: Deploy to test
-on: 
-  push:
-    branches: [ master ]
-
+on: [workflow_dispatch]
 env:
   DEPLOY_PATH: /var/www/app
   BUILD_SCRIPT_OUTPUT: dist
 jobs:
-  ESLint:
+  deploy:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 20
-      - name: Install Dependencies
-        run: npm ci
-      - name: Run eslint
-        run: npm run lint
-  Test-unit:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 20
-      - name: Install Dependencies
-        run: npm ci
-      - name: Run unit test
-        run: npm run test:unit
-  Build:
-    runs-on: ubuntu-latest
-    needs: [Test-unit, ESLint]
+    environment: test
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
@@ -41,38 +16,6 @@ jobs:
         run: npm ci
       - name: Build application
         run: npm run build
-      - name: Upload bundle
-        uses: actions/upload-artifact@v3
-        with:
-          name: build-aplication
-          path: ./${{ env.BUILD_SCRIPT_OUTPUT }}
-  Test-e2e:
-    needs: Build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 20
-      - name: Install Dependencies
-        run: npm ci
-      - name: Download build
-        uses: actions/download-artifact@v3
-        with:
-          name: build-aplication
-          path: ./${{ env.BUILD_SCRIPT_OUTPUT }}
-      - name: Testing application
-        run: npm run test:e2e
-  Deploy:
-    runs-on: ubuntu-latest
-    needs: Test-e2e
-    environment: test
-    steps:
-      - name: Download build
-        uses: actions/download-artifact@v3
-        with:
-          name: build-aplication
-          path: ./${{ env.BUILD_SCRIPT_OUTPUT }}
       - name: deploy to server
         uses: appleboy/scp-action@master
         with:

@@ -1,6 +1,5 @@
 name: Deploy to prod
 on: [workflow_dispatch]
-
 env:
   DEPLOY_PATH: /var/www/app
   BUILD_SCRIPT_OUTPUT: dist
